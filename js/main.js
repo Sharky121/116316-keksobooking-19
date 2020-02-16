@@ -2,7 +2,7 @@
 
 var COUNT = 8;
 
-var TITLE_ARRAY = [
+var TITLES = [
   'Title 1',
   'Title 2',
   'Title 3',
@@ -13,7 +13,7 @@ var TITLE_ARRAY = [
   'Title 8'
 ];
 
-var DESCRIPTION_ARRAY = [
+var DESCRIPTIONS = [
   'Description 1',
   'Description 2',
   'Description 3',
@@ -24,7 +24,7 @@ var DESCRIPTION_ARRAY = [
   'Description 8'
 ];
 
-var FEATURES_ARRAY = [
+var FEATURES = [
   'wifi',
   'dishwasher',
   'parking',
@@ -33,13 +33,13 @@ var FEATURES_ARRAY = [
   'conditioner'
 ];
 
-var PHOTOS_ARRAY = [
+var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-var TYPE_ARRAY = [
+var TYPES = [
   'palace',
   'flat',
   'house',
@@ -52,7 +52,7 @@ var TIMES = [
   '14:00'
 ];
 
-var AVATAR_IMAGES = [];
+var AVATARS = [];
 
 var Price = {
   MIN: 1000,
@@ -95,34 +95,19 @@ var getRandomElementArray = function (array) {
 
 // Функция возвращения массива случайной длины
 var getRandomArray = function (array) {
-  var tempArray = array.slice();
-  var newArray = [];
-  var newArrayLength = getRandomInteger(1, array.length);
+  var filterArray = array.filter(function (item, index) {
+    return index === getRandomInteger(index, index + 1);
+  });
 
-  for (var i = 0; i < newArrayLength; i++) {
-    var index = getRandomInteger(0, tempArray.length - 1);
-
-    newArray.push(tempArray[index]);
-    tempArray.splice(index, 1);
-  }
-
-  return newArray;
+  return filterArray.length === 0 ? array : filterArray;
 };
 
-// Функция возвращает случайный элемент из массива, изменяя исходный массив
+// Функция возвращает случайный элемент из массива, удаляя его из исходного массива
 var getRandomElementModifyArray = function (array) {
   var randomIndex = getRandomInteger(0, array.length - 1);
-  var avatarImageSrc = array[randomIndex];
-  array.splice(randomIndex, 1);
 
-  return avatarImageSrc;
+  return array.splice(randomIndex, 1);
 };
-
-// Наполняем массив картинок аватаров
-for (var i = 1; i <= COUNT; i++) {
-  var imageSrc = 'img/avatars/user0' + i + '.png';
-  AVATAR_IMAGES.push(imageSrc);
-}
 
 // Функция создания одного объявления
 var generateAd = function () {
@@ -133,26 +118,26 @@ var generateAd = function () {
 
   var ad = {
     author: {
-      avatar: getRandomElementModifyArray(AVATAR_IMAGES)
+      avatar: getRandomElementModifyArray(AVATARS)
     },
 
     offer: {
-      title: getRandomElementModifyArray(TITLE_ARRAY),
-      address: '{{location.' + coords.x + '}}, {{location.' + coords.y + '}}',
+      title: getRandomElementModifyArray(TITLES),
+      address: coords.x + ', ' + coords.y,
       price: getRandomInteger(Price.MIN, Price.MAX),
-      type: getRandomElementArray(TYPE_ARRAY),
+      type: getRandomElementArray(TYPES),
       rooms: getRandomInteger(Rooms.MIN, Rooms.MAX),
       guests: getRandomInteger(Guests.MIN, Guests.MAX),
       checkin: getRandomElementArray(TIMES),
       checkout: getRandomElementArray(TIMES),
-      features: getRandomArray(FEATURES_ARRAY),
-      description: getRandomElementModifyArray(DESCRIPTION_ARRAY),
-      photos: getRandomArray(PHOTOS_ARRAY)
+      features: getRandomArray(FEATURES),
+      description: getRandomElementModifyArray(DESCRIPTIONS),
+      photos: getRandomArray(PHOTOS)
     },
 
     location: {
-      x: coords.x - (Offset.X) / 2,
-      y: coords.y - Offset.Y
+      x: coords.x,
+      y: coords.y
     }
   };
 
@@ -171,21 +156,12 @@ var generateAdsArray = function (count) {
   return adsArray;
 };
 
-// Создаём массив объявлений
-var adsArray = generateAdsArray(COUNT);
-
-// DOM
-document.querySelector('.map').classList.remove('map--faded');
-var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var adFragment = document.createDocumentFragment();
-var map = document.querySelector('.map__pins');
-
 // Функция рендера одного объявления
 var renderAd = function (ad) {
   var element = adTemplate.cloneNode(true);
 
-  element.style.left = ad.location.x + 'px';
-  element.style.top = ad.location.y + 'px';
+  element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
+  element.style.top = ad.location.y - Offset.Y + 'px';
 
   element.querySelector('img').src = ad.author.avatar;
   element.querySelector('img').alt = ad.offer.title;
@@ -193,8 +169,29 @@ var renderAd = function (ad) {
   return element;
 };
 
-for (var j = 0; j < adsArray.length; j++) {
-  adFragment.appendChild(renderAd(adsArray[j]));
+// Функция отрисовки всех объявлений
+var renderAds = function (ads) {
+  for (var j = 0; j < ads.length; j++) {
+    adFragment.appendChild(renderAd(ads[j]));
+  }
+
+  map.appendChild(adFragment);
+};
+
+// Наполняем массив картинок аватаров
+for (var i = 1; i <= COUNT; i++) {
+  var imageSrc = 'img/avatars/user0' + i + '.png';
+  AVATARS.push(imageSrc);
 }
 
-map.appendChild(adFragment);
+// Создаём массив объявлений
+var adsArray = generateAdsArray(COUNT);
+
+// Получаем элементы
+document.querySelector('.map').classList.remove('map--faded');
+var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var adFragment = document.createDocumentFragment();
+var map = document.querySelector('.map__pins');
+
+// Отрисовываем элементы
+renderAds(adsArray);
