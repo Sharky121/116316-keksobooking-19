@@ -78,15 +78,8 @@ var getRandomArray = function (array) {
   return filterArray.length === 0 ? array : filterArray;
 };
 
-// Функция возвращает случайный элемент из массива, удаляя его из исходного массива
-var getRandomElementModifyArray = function (array) {
-  var randomIndex = getRandomInteger(0, array.length - 1);
-
-  return array.splice(randomIndex, 1);
-};
-
 // Функция создания одного объявления
-var generateAd = function () {
+var generateAd = function (count) {
   var coords = {
     x: getRandomInteger(Coords.X_MIN, Coords.X_MAX),
     y: getRandomInteger(Coords.Y_MIN, Coords.Y_MAX)
@@ -94,11 +87,11 @@ var generateAd = function () {
 
   var ad = {
     author: {
-      avatar: getRandomElementModifyArray(AVATARS)
+      avatar: 'img/avatars/user0' + (count + 1) + '.png'
     },
 
     offer: {
-      title: getRandomElementModifyArray(TITLES),
+      title: 'Title ' + count,
       address: coords.x + ', ' + coords.y,
       price: getRandomInteger(Price.MIN, Price.MAX),
       type: getRandomElementArray(TYPES),
@@ -107,7 +100,7 @@ var generateAd = function () {
       checkin: getRandomElementArray(TIMES),
       checkout: getRandomElementArray(TIMES),
       features: getRandomArray(FEATURES),
-      description: getRandomElementModifyArray(DESCRIPTIONS),
+      description: 'Description ' + count,
       photos: getRandomArray(PHOTOS)
     },
 
@@ -124,8 +117,8 @@ var generateAd = function () {
 var generateAdsArray = function (count) {
   var adsArray = [];
 
-  for (var j = 0; j < count; j++) {
-    var ad = generateAd();
+  for (var i = 0; i < count; i++) {
+    var ad = generateAd(i);
     adsArray.push(ad);
   }
 
@@ -153,36 +146,6 @@ var renderAds = function (ads) {
 
   map.appendChild(adFragment);
 };
-
-// Функция наполнения массива случайными данными
-var generateArray = function (count, str) {
-  var array = [];
-
-  for (var i = 1; i <= count; i++) {
-    array.push(str + ' ' + i);
-  }
-
-  return array;
-};
-
-// Функция наполнения массива аватаров
-var generateAvatarsArray = function (count) {
-  var array = [];
-
-  for (var i = 1; i <= count; i++) {
-    var imageSrc = 'img/avatars/user0' + i + '.png';
-    array.push(imageSrc);
-  }
-
-  return array;
-};
-
-// Наполняем пустые массивы данными
-var TITLES = generateArray(COUNT, 'title');
-
-var DESCRIPTIONS = generateArray(COUNT, 'description');
-
-var AVATARS = generateAvatarsArray(8);
 
 // Создаём массив объявлений
 var adsArray = generateAdsArray(COUNT);
