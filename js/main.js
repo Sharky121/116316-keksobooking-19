@@ -118,8 +118,7 @@ var generateAdsArray = function (count) {
   var adsArray = [];
 
   for (var i = 0; i < count; i++) {
-    var ad = generateAd(i);
-    adsArray.push(ad);
+    adsArray.push(generateAd(i));
   }
 
   return adsArray;
@@ -127,7 +126,6 @@ var generateAdsArray = function (count) {
 
 // Функция рендера одного объявления
 var renderAd = function (ad) {
-  var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var element = adTemplate.cloneNode(true);
 
   element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
@@ -140,7 +138,7 @@ var renderAd = function (ad) {
 };
 
 // Функция создания фрагмента
-var generateFragment = function (array) {
+var renderAds = function (array) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < array.length; i++) {
@@ -151,13 +149,16 @@ var generateFragment = function (array) {
 };
 
 // Функция отрисовки всех объявлений на карте
-var renderAds = function (count) {
-  var map = document.querySelector('.map__pins');
+var main = function (count) {
   var adsArray = generateAdsArray(count);
-  var fragment = generateFragment(adsArray);
+  var fragment = renderAds(adsArray);
 
-  map.appendChild(fragment);
+  mapPins.appendChild(fragment);
 };
 
-document.querySelector('.map').classList.remove('map--faded');
-renderAds(COUNT);
+var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
+var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+
+map.classList.remove('map--faded');
+main(COUNT);
