@@ -127,6 +127,7 @@ var generateAdsArray = function (count) {
 
 // Функция рендера одного объявления
 var renderAd = function (ad) {
+  var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var element = adTemplate.cloneNode(true);
 
   element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
@@ -138,23 +139,25 @@ var renderAd = function (ad) {
   return element;
 };
 
-// Функция отрисовки всех объявлений
-var renderAds = function (ads) {
-  for (var j = 0; j < ads.length; j++) {
-    adFragment.appendChild(renderAd(ads[j]));
+// Функция создания фрагмента
+var generateFragment = function (array) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < array.length; i++) {
+    fragment.appendChild(renderAd(array[i]));
   }
 
-  map.appendChild(adFragment);
+  return fragment;
 };
 
-// Создаём массив объявлений
-var adsArray = generateAdsArray(COUNT);
+// Функция отрисовки всех объявлений на карте
+var renderAds = function (count) {
+  var map = document.querySelector('.map__pins');
+  var adsArray = generateAdsArray(count);
+  var fragment = generateFragment(adsArray);
 
-// Получаем элементы
+  map.appendChild(fragment);
+};
+
 document.querySelector('.map').classList.remove('map--faded');
-var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var adFragment = document.createDocumentFragment();
-var map = document.querySelector('.map__pins');
-
-// Отрисовываем элементы
-renderAds(adsArray);
+renderAds(COUNT);
