@@ -2,28 +2,6 @@
 
 var COUNT = 8;
 
-var TITLES = [
-  'Title 1',
-  'Title 2',
-  'Title 3',
-  'Title 4',
-  'Title 5',
-  'Title 6',
-  'Title 7',
-  'Title 8'
-];
-
-var DESCRIPTIONS = [
-  'Description 1',
-  'Description 2',
-  'Description 3',
-  'Description 4',
-  'Description 5',
-  'Description 6',
-  'Description 7',
-  'Description 8'
-];
-
 var FEATURES = [
   'wifi',
   'dishwasher',
@@ -51,8 +29,6 @@ var TIMES = [
   '13:00',
   '14:00'
 ];
-
-var AVATARS = [];
 
 var Price = {
   MIN: 1000,
@@ -95,8 +71,8 @@ var getRandomElementArray = function (array) {
 
 // Функция возвращения массива случайной длины
 var getRandomArray = function (array) {
-  var filterArray = array.filter(function (item, index) {
-    return index === getRandomInteger(index, index + 1);
+  var filterArray = array.filter(function () {
+    return getRandomInteger(0, 1);
   });
 
   return filterArray.length === 0 ? array : filterArray;
@@ -178,11 +154,35 @@ var renderAds = function (ads) {
   map.appendChild(adFragment);
 };
 
-// Наполняем массив картинок аватаров
-for (var i = 1; i <= COUNT; i++) {
-  var imageSrc = 'img/avatars/user0' + i + '.png';
-  AVATARS.push(imageSrc);
-}
+// Функция наполнения массива случайными данными
+var generateArray = function (count, str) {
+  var array = [];
+
+  for (var i = 1; i <= count; i++) {
+    array.push(str + ' ' + i);
+  }
+
+  return array;
+};
+
+// Функция наполнения массива аватаров
+var generateAvatarsArray = function (count) {
+  var array = [];
+
+  for (var i = 1; i <= count; i++) {
+    var imageSrc = 'img/avatars/user0' + i + '.png';
+    array.push(imageSrc);
+  }
+
+  return array;
+};
+
+// Наполняем пустые массивы данными
+var TITLES = generateArray(COUNT, 'title');
+
+var DESCRIPTIONS = generateArray(COUNT, 'description');
+
+var AVATARS = generateAvatarsArray(8);
 
 // Создаём массив объявлений
 var adsArray = generateAdsArray(COUNT);
