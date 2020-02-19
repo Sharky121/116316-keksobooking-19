@@ -126,7 +126,7 @@ var generateAdsArray = function (count) {
 
 // Функция рендера одного объявления
 var renderAd = function (ad) {
-  var element = adTemplate.cloneNode(true);
+  var element = Nodes.AD_TEMPLATE.cloneNode(true);
 
   element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
   element.style.top = ad.location.y - Offset.Y + 'px';
@@ -153,12 +153,14 @@ var main = function (count) {
   var adsArray = generateAdsArray(count);
   var fragment = renderAds(adsArray);
 
-  mapPins.appendChild(fragment);
+  Nodes.MAP_PINS.appendChild(fragment);
 };
 
-var map = document.querySelector('.map');
-var mapPins = map.querySelector('.map__pins');
-var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var Nodes = {
+  MAP: document.querySelector('.map'),
+  MAP_PINS: document.querySelector('.map__pins'),
+  AD_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin')
+};
 
-map.classList.remove('map--faded');
+Nodes.MAP.classList.remove('map--faded');
 main(COUNT);
