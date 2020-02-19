@@ -57,6 +57,12 @@ var Coords = {
   Y_MAX: 630
 };
 
+var Nodes = {
+  MAP: document.querySelector('.map'),
+  MAP_PINS: document.querySelector('.map__pins'),
+  AD_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin')
+};
+
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -154,12 +160,6 @@ var main = function (count) {
   var fragment = renderAds(adsArray);
 
   Nodes.MAP_PINS.appendChild(fragment);
-};
-
-var Nodes = {
-  MAP: document.querySelector('.map'),
-  MAP_PINS: document.querySelector('.map__pins'),
-  AD_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin')
 };
 
 Nodes.MAP.classList.remove('map--faded');
