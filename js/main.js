@@ -17,12 +17,12 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-var TYPES = [
-  'palace',
-  'flat',
-  'house',
-  'bungalo'
-];
+var Types = {
+  PALACE: 'Дворец',
+  FLAT: 'Квартира',
+  HOUSE: 'Дом',
+  BUNGALO: 'Бунгало'
+};
 
 var TIMES = [
   '12:00',
@@ -51,10 +51,21 @@ var Offset = {
 };
 
 var Coords = {
-  X_MIN: 0 + Offset.X,
+  X_MIN: Offset.X,
   X_MAX: 1200 - Offset.X,
   Y_MIN: 130,
   Y_MAX: 630
+};
+
+var Nodes = {
+  MAP: document.querySelector('.map'),
+  MAP_PINS: document.querySelector('.map__pins'),
+  AD_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin'),
+
+};
+
+var PopupNodes = {
+  POPUP_TEMPLATE: document.querySelector('#card').content.querySelector('.map__card'),
 };
 
 // Функция случайного числа с параметром диапазона
@@ -94,7 +105,7 @@ var generateAd = function (count) {
       title: 'Title ' + count,
       address: coords.x + ', ' + coords.y,
       price: getRandomInteger(Price.MIN, Price.MAX),
-      type: getRandomElementArray(TYPES),
+      type: getRandomElementArray(Types),
       rooms: getRandomInteger(Rooms.MIN, Rooms.MAX),
       guests: getRandomInteger(Guests.MIN, Guests.MAX),
       checkin: getRandomElementArray(TIMES),
@@ -113,7 +124,7 @@ var generateAd = function (count) {
   return ad;
 };
 
-// Функция создания массива объявлений
+// Функция создания массива объявлений. Возвращает сгенерированный массив объявлений
 var generateAdsArray = function (count) {
   var adsArray = [];
 
@@ -126,7 +137,7 @@ var generateAdsArray = function (count) {
 
 // Функция рендера одного объявления
 var renderAd = function (ad) {
-  var element = adTemplate.cloneNode(true);
+  var element = Nodes.AD_TEMPLATE.cloneNode(true);
 
   element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
   element.style.top = ad.location.y - Offset.Y + 'px';
@@ -153,12 +164,36 @@ var main = function (count) {
   var adsArray = generateAdsArray(count);
   var fragment = renderAds(adsArray);
 
-  mapPins.appendChild(fragment);
+  Nodes.MAP_PINS.appendChild(fragment);
 };
 
-var map = document.querySelector('.map');
-var mapPins = map.querySelector('.map__pins');
-var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-
-map.classList.remove('map--faded');
+Nodes.MAP.classList.remove('map--faded');
 main(COUNT);
+
+// Функция рендера одного объявления
+var renderCard = function (card) {
+  var element = PopupNodes.POPUP_TEMPLATE.cloneNode(true);
+
+  element.querySelector('.popup__title').textContent = card[0].offer.title;
+  element.querySelector('.popup__text--address').textContent = card[0].offer.address;
+  element.querySelector('.popup__text--price').textContent = card[0].offer.price + ' ₽/ночь';
+  element.querySelector('.popup__type').textContent = card[0].offer.type;
+  element.querySelector('.popup__text--capacity').textContent = card[0].offer.rooms + ' комнаты для ' + card[0].offer.guests + ' гостей';
+  element.querySelector('.popup__text--time').textContent = 'Заезд после ' + card[0].offer.checkin + ', выезд до ' + card[0].offer.checkout;
+
+  element.querySelector('.popup__description').textContent = card[0].offer.description;
+  element.querySelector('.popup__photos').textContent = card[0].offer.title;
+  element.querySelector('.popup__avatar').src = card[0].author.avatar;
+
+  var ul = element.querySelector('.popup__features');
+  ul.querySelector('.popup__feature').textContent = card[0].offer.features;
+
+  return element;
+};
+
+var test = generateAdsArray(1);
+var test2 = renderCard(test);
+var filters = document.querySelector('.map__filters-container');
+console.log(test);
+
+Nodes.MAP.insertBefore(test2, filters);
