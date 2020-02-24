@@ -57,6 +57,15 @@ var Coords = {
   Y_MAX: 630
 };
 
+var Nodes = {
+  map: document.querySelector('.map'),
+  mapPins: document.querySelector('.map__pins'),
+  mapPinMain: document.querySelector('.map__pin--main'),
+  adForm: document.querySelector('.ad-form'),
+  mapFilters: document.querySelector('.map__filters'),
+  adTemplate: document.querySelector('#pin').content.querySelector('.map__pin')
+};
+
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -126,7 +135,7 @@ var generateAdsArray = function (count) {
 
 // Функция рендера одного объявления
 var renderAd = function (ad) {
-  var element = adTemplate.cloneNode(true);
+  var element = Nodes.adTemplate.cloneNode(true);
 
   element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
   element.style.top = ad.location.y - Offset.Y + 'px';
@@ -153,12 +162,41 @@ var main = function (count) {
   var adsArray = generateAdsArray(count);
   var fragment = renderAds(adsArray);
 
-  mapPins.appendChild(fragment);
+  Nodes.mapPins.appendChild(fragment);
 };
 
-var map = document.querySelector('.map');
-var mapPins = map.querySelector('.map__pins');
-var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+// Nodes.map.classList.remove('map--faded');
+// main(COUNT);
 
-map.classList.remove('map--faded');
-main(COUNT);
+
+var adInputs = Nodes.adForm.querySelectorAll('input');
+var adSelects = Nodes.adForm.querySelectorAll('select');
+
+Nodes.mapFilters.classList.add('map__filters--disabled');
+
+var filtersInputs = Nodes.mapFilters.querySelectorAll('input');
+var filterSelects = Nodes.mapFilters.querySelectorAll('select');
+
+console.log(adInputs);
+
+adInputs.forEach(function (item) {
+  item.setAttribute('disabled', 'disabled');
+});
+
+adSelects.forEach(function (item) {
+  item.setAttribute('disabled', 'disabled');
+});
+
+filtersInputs.forEach(function (item) {
+  item.setAttribute('disabled', 'disabled');
+});
+
+filterSelects.forEach(function (item) {
+  item.setAttribute('disabled', 'disabled');
+});
+
+Nodes.mapPinMain.addEventListener('mousedown', function (evt) {
+  if (evt.button === 0) {
+
+  }
+});
