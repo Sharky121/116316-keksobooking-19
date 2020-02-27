@@ -57,6 +57,11 @@ var Coords = {
   Y_MAX: 630
 };
 
+var MainPin = {
+  SIZE: 65,
+  TAIL_HEIGHT: 22
+};
+
 var Nodes = {
   map: document.querySelector('.map'),
   mapPins: document.querySelector('.map__pins'),
@@ -65,6 +70,17 @@ var Nodes = {
   mapFilters: document.querySelector('.map__filters'),
   adTemplate: document.querySelector('#pin').content.querySelector('.map__pin')
 };
+
+var FieldNodes = {
+  AD_INPUTS: Nodes.adForm.querySelectorAll('input'),
+  FILTER_INPUTS: Nodes.mapFilters.querySelectorAll('input'),
+  AD_SELECTS: Nodes.adForm.querySelectorAll('select'),
+  FILTER_SELECTS: Nodes.mapFilters.querySelectorAll('select')
+};
+
+var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
+var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
+var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
 
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
@@ -165,38 +181,84 @@ var main = function (count) {
   Nodes.mapPins.appendChild(fragment);
 };
 
-// Nodes.map.classList.remove('map--faded');
-// main(COUNT);
+var disableField = function (field) {
+  field.setAttribute('disabled', 'disabled');
+};
 
+var enableField = function (field) {
+  field.removeAttribute('disabled');
+};
 
-var adInputs = Nodes.adForm.querySelectorAll('input');
-var adSelects = Nodes.adForm.querySelectorAll('select');
+var disableFields = function (fields) {
+  var fieldsKeys = Object.keys(fields);
 
-Nodes.mapFilters.classList.add('map__filters--disabled');
-
-var filtersInputs = Nodes.mapFilters.querySelectorAll('input');
-var filterSelects = Nodes.mapFilters.querySelectorAll('select');
-
-console.log(adInputs);
-
-adInputs.forEach(function (item) {
-  item.setAttribute('disabled', 'disabled');
-});
-
-adSelects.forEach(function (item) {
-  item.setAttribute('disabled', 'disabled');
-});
-
-filtersInputs.forEach(function (item) {
-  item.setAttribute('disabled', 'disabled');
-});
-
-filterSelects.forEach(function (item) {
-  item.setAttribute('disabled', 'disabled');
-});
-
-Nodes.mapPinMain.addEventListener('mousedown', function (evt) {
-  if (evt.button === 0) {
-
+  for (var i = 0; i < fieldsKeys.length; i++) {
+    fields[fieldsKeys[i]].forEach(function (item) {
+      disableField(item);
+    });
   }
+};
+
+var enableFields = function (fields) {
+  var fieldsKeys = Object.keys(fields);
+
+  for (var i = 0; i < fieldsKeys.length; i++) {
+    fields[fieldsKeys[i]].forEach(function (item) {
+      enableField(item);
+    });
+  }
+};
+
+var deactivatePage = function () {
+  var top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE / 2);
+  var left = Math.floor(Nodes.mapPinMain.offsetLeft + MainPin.SIZE / 2);
+
+  ADDRESS_FIELD.value = top + ', ' + left;
+
+  disableFields(FieldNodes);
+  Nodes.mapFilters.classList.add('map__filters--disabled');
+};
+
+var activatePage = function () {
+  var top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE + MainPin.TAIL_HEIGHT);
+  var left = Math.floor(Nodes.mapPinMain.offsetLeft + MainPin.SIZE / 2);
+
+  ADDRESS_FIELD.value = top + ', ' + left;
+
+  Nodes.mapFilters.classList.remove('map__filters--disabled');
+  Nodes.adForm.classList.remove('ad-form--disabled');
+  Nodes.map.classList.remove('map--faded');
+
+  enableFields(FieldNodes);
+  main(COUNT);
+};
+
+var pinMovingHandler = function (evt) {
+  if (evt.button === 0) {
+    activatePage();
+
+    Nodes.mapPinMain.removeEventListener('mousedown', pinMovingHandler);
+  }
+};
+
+var pinMovingEnterHandler = function (evt) {
+  if (evt.key === 'Enter') {
+    activatePage();
+
+    document.removeEventListener('keydown', pinMovingEnterHandler);
+  }
+};
+
+Nodes.mapPinMain.addEventListener('mousedown', pinMovingHandler);
+document.addEventListener('keydown', pinMovingEnterHandler);
+
+var compareField = function (field1, field2) {
+
+};
+
+ROOM_NUMBER_FIELD.addEventListener('change', function () {
+  var index = ROOM_NUMBER_FIELD.selectedIndex;
+  console.log(ROOM_NUMBER_FIELD);
 });
+
+deactivatePage();
