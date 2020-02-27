@@ -78,10 +78,6 @@ var FieldNodes = {
   FILTER_SELECTS: Nodes.mapFilters.querySelectorAll('select')
 };
 
-var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
-var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
-var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
-
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -252,13 +248,37 @@ var pinMovingEnterHandler = function (evt) {
 Nodes.mapPinMain.addEventListener('mousedown', pinMovingHandler);
 document.addEventListener('keydown', pinMovingEnterHandler);
 
+
+var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
+var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
+var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
+
 var compareField = function (field1, field2) {
 
 };
 
+var getSelectInputs = function (input1, input2) {
+  var index1 = input1.selectedIndex;
+  var index2 = input2.selectedIndex;
+
+  var Values = {
+    value1: input1[index1].value,
+    value2: input2[index2].value
+  };
+
+  return Values;
+};
+
 ROOM_NUMBER_FIELD.addEventListener('change', function () {
-  var index = ROOM_NUMBER_FIELD.selectedIndex;
-  console.log(ROOM_NUMBER_FIELD);
+  var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
+
+  compareField(values.value1, values.value2);
 });
 
-deactivatePage();
+CAPACITY_FIELD.addEventListener('change', function () {
+  var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
+
+  compareField(values.value1, values.value2);
+});
+
+// deactivatePage();
