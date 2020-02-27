@@ -78,6 +78,10 @@ var FieldNodes = {
   FILTER_SELECTS: Nodes.mapFilters.querySelectorAll('select')
 };
 
+var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
+var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
+var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
+
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -177,58 +181,62 @@ var main = function (count) {
   Nodes.mapPins.appendChild(fragment);
 };
 
-var disableField = function (field) {
-  field.setAttribute('disabled', 'disabled');
-};
-
-var enableField = function (field) {
-  field.removeAttribute('disabled');
-};
-
+// Функция блокировки полей
 var disableFields = function (fields) {
   var fieldsKeys = Object.keys(fields);
 
   for (var i = 0; i < fieldsKeys.length; i++) {
     fields[fieldsKeys[i]].forEach(function (item) {
-      disableField(item);
+      item.setAttribute('disabled', 'disabled');
     });
   }
 };
 
+// Функция разблокировки полей
 var enableFields = function (fields) {
   var fieldsKeys = Object.keys(fields);
 
   for (var i = 0; i < fieldsKeys.length; i++) {
     fields[fieldsKeys[i]].forEach(function (item) {
-      enableField(item);
+      item.removeAttribute('disabled');
     });
   }
 };
 
-var deactivatePage = function () {
-  var top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE / 2);
+// Функция установки координат адреса
+var setAddressField = function (state) {
   var left = Math.floor(Nodes.mapPinMain.offsetLeft + MainPin.SIZE / 2);
+  var top;
+
+  if (state === 'active') {
+    top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE + MainPin.TAIL_HEIGHT);
+  } else {
+    top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE / 2);
+  }
 
   ADDRESS_FIELD.value = top + ', ' + left;
-
-  disableFields(FieldNodes);
-  Nodes.mapFilters.classList.add('map__filters--disabled');
 };
 
+// Функция перевода страницы в неактивный режим
+var deactivatePage = function () {
+  Nodes.mapFilters.classList.add('map__filters--disabled');
+
+  setAddressField();
+  disableFields(FieldNodes);
+};
+
+//  Функция перевода страницы в активный режим
 var activatePage = function () {
-  var top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE + MainPin.TAIL_HEIGHT);
-  var left = Math.floor(Nodes.mapPinMain.offsetLeft + MainPin.SIZE / 2);
-
-  ADDRESS_FIELD.value = top + ', ' + left;
-
   Nodes.mapFilters.classList.remove('map__filters--disabled');
   Nodes.adForm.classList.remove('ad-form--disabled');
   Nodes.map.classList.remove('map--faded');
 
+  setAddressField('active');
   enableFields(FieldNodes);
   main(COUNT);
 };
 
+// Хэндлер для перемещения пина
 var pinMovingHandler = function (evt) {
   if (evt.button === 0) {
     activatePage();
@@ -237,26 +245,44 @@ var pinMovingHandler = function (evt) {
   }
 };
 
-var pinMovingEnterHandler = function (evt) {
+// Хэндлер для нажатия Enter по пину
+var pinPressEnterHandler = function (evt) {
   if (evt.key === 'Enter') {
     activatePage();
 
-    document.removeEventListener('keydown', pinMovingEnterHandler);
+    document.removeEventListener('keydown', pinPressEnterHandler);
   }
 };
 
-Nodes.mapPinMain.addEventListener('mousedown', pinMovingHandler);
-document.addEventListener('keydown', pinMovingEnterHandler);
-
-
-var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
-var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
-var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
-
+// Функция сравнения двух полей
 var compareField = function (field1, field2) {
+  field1 = parseInt(field1, 10);
+  field2 = parseInt(field2, 10);
 
+  if (field1 === 1 && field2 === 1) {
+    return true;
+  }
+
+  if (field1 === 2 && field2 === 1) {
+    return true;
+  }
+
+  if (field1 === 2 && field2 === 2) {
+    return true;
+  }
+
+  if (field1 === 3 && field2 !== 0) {
+    return true;
+  }
+
+  if (field1 === 100 && field2 === 0) {
+    return true;
+  }
+
+  return false;
 };
 
+// Функция для обработки options value.
 var getSelectInputs = function (input1, input2) {
   var index1 = input1.selectedIndex;
   var index2 = input2.selectedIndex;
@@ -269,16 +295,18 @@ var getSelectInputs = function (input1, input2) {
   return Values;
 };
 
-ROOM_NUMBER_FIELD.addEventListener('change', function () {
-  var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
+Nodes.mapPinMain.addEventListener('mousedown', pinMovingHandler);
+document.addEventListener('keydown', pinPressEnterHandler);
 
-  compareField(values.value1, values.value2);
+Nodes.adForm.addEventListener('click', function () {
+  var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
+  var result = compareField(values.value1, values.value2);
+
+  if (!result) {
+    CAPACITY_FIELD.setCustomValidity('Выбранное количество гостей не подходит под количество комнат!');
+  } else {
+    CAPACITY_FIELD.setCustomValidity('');
+  }
 });
 
-CAPACITY_FIELD.addEventListener('change', function () {
-  var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
-
-  compareField(values.value1, values.value2);
-});
-
-// deactivatePage();
+deactivatePage();
