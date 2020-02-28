@@ -83,6 +83,7 @@ var FieldNodes = {
 var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
 var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
 var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
+var MAIN_PIN_Y = Nodes.mapPinMain.offsetTop + MainPin.SIZE;
 
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
@@ -196,8 +197,6 @@ var setStateFields = function (fields, isActive) {
 
 // Функция установки координат адреса
 var setAddressField = function (isState) {
-  var MAIN_PIN_Y = Nodes.mapPinMain.offsetTop + MainPin.SIZE;
-
   var left = Math.floor(MAIN_PIN_Y / 2);
   var top = isState ? Math.floor(MAIN_PIN_Y + MainPin.TAIL_HEIGHT) : Math.floor(MAIN_PIN_Y - MainPin.SIZE / 2);
 
