@@ -30,6 +30,8 @@ var TIMES = [
   '14:00'
 ];
 
+var CUSTOM_VALIDITY_TEXT = 'Выбранное количество гостей не подходит под количество комнат!';
+
 var Price = {
   MIN: 1000,
   MAX: 10000
@@ -181,38 +183,23 @@ var main = function (count) {
   Nodes.mapPins.appendChild(fragment);
 };
 
-// Функция блокировки полей
-var disableFields = function (fields) {
+// Функция блокировки / разблокировки полей
+var setStateFields = function (fields, isActive) {
   var fieldsKeys = Object.keys(fields);
 
   for (var i = 0; i < fieldsKeys.length; i++) {
     fields[fieldsKeys[i]].forEach(function (item) {
-      item.setAttribute('disabled', 'disabled');
-    });
-  }
-};
-
-// Функция разблокировки полей
-var enableFields = function (fields) {
-  var fieldsKeys = Object.keys(fields);
-
-  for (var i = 0; i < fieldsKeys.length; i++) {
-    fields[fieldsKeys[i]].forEach(function (item) {
-      item.removeAttribute('disabled');
+      isActive ? item.removeAttribute('disabled') : item.setAttribute('disabled', 'disabled');
     });
   }
 };
 
 // Функция установки координат адреса
-var setAddressField = function (state) {
-  var left = Math.floor(Nodes.mapPinMain.offsetLeft + MainPin.SIZE / 2);
-  var top;
+var setAddressField = function (isState) {
+  var MAIN_PIN_Y = Nodes.mapPinMain.offsetTop + MainPin.SIZE;
 
-  if (state === 'active') {
-    top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE + MainPin.TAIL_HEIGHT);
-  } else {
-    top = Math.floor(Nodes.mapPinMain.offsetTop + MainPin.SIZE / 2);
-  }
+  var left = Math.floor(MAIN_PIN_Y / 2);
+  var top = isState ? Math.floor(MAIN_PIN_Y + MainPin.TAIL_HEIGHT) : Math.floor(MAIN_PIN_Y - MainPin.SIZE / 2);
 
   ADDRESS_FIELD.value = top + ', ' + left;
 };
@@ -221,8 +208,8 @@ var setAddressField = function (state) {
 var deactivatePage = function () {
   Nodes.mapFilters.classList.add('map__filters--disabled');
 
-  setAddressField();
-  disableFields(FieldNodes);
+  setAddressField(false);
+  setStateFields(FieldNodes, false);
 };
 
 //  Функция перевода страницы в активный режим
@@ -231,8 +218,8 @@ var activatePage = function () {
   Nodes.adForm.classList.remove('ad-form--disabled');
   Nodes.map.classList.remove('map--faded');
 
-  setAddressField('active');
-  enableFields(FieldNodes);
+  setAddressField(true);
+  setStateFields(FieldNodes, true);
   main(COUNT);
 };
 
@@ -259,15 +246,11 @@ var compareField = function (field1, field2) {
   field1 = parseInt(field1, 10);
   field2 = parseInt(field2, 10);
 
-  if (field1 === 1 && field2 === 1) {
+  if (field1 === field2 && field1 >= 1) {
     return true;
   }
 
   if (field1 === 2 && field2 === 1) {
-    return true;
-  }
-
-  if (field1 === 2 && field2 === 2) {
     return true;
   }
 
@@ -284,12 +267,9 @@ var compareField = function (field1, field2) {
 
 // Функция для обработки options value.
 var getSelectInputs = function (input1, input2) {
-  var index1 = input1.selectedIndex;
-  var index2 = input2.selectedIndex;
-
   var Values = {
-    value1: input1[index1].value,
-    value2: input2[index2].value
+    value1: input1.value,
+    value2: input2.value
   };
 
   return Values;
@@ -302,11 +282,7 @@ Nodes.adForm.addEventListener('click', function () {
   var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
   var result = compareField(values.value1, values.value2);
 
-  if (!result) {
-    CAPACITY_FIELD.setCustomValidity('Выбранное количество гостей не подходит под количество комнат!');
-  } else {
-    CAPACITY_FIELD.setCustomValidity('');
-  }
+  result ? CAPACITY_FIELD.setCustomValidity('') : CAPACITY_FIELD.setCustomValidity(CUSTOM_VALIDITY_TEXT);
 });
 
 deactivatePage();
