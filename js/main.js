@@ -80,9 +80,12 @@ var FieldNodes = {
   FILTER_SELECTS: Nodes.mapFilters.querySelectorAll('select')
 };
 
-var ADDRESS_FIELD = Nodes.adForm.querySelector('#address');
-var ROOM_NUMBER_FIELD = Nodes.adForm.querySelector('#room_number');
-var CAPACITY_FIELD = Nodes.adForm.querySelector('#capacity');
+var ValidityFields = {
+  ADDRESS: Nodes.adForm.querySelector('#address'),
+  ROOMS: Nodes.adForm.querySelector('#room_number'),
+  CAPACITY: Nodes.adForm.querySelector('#capacity')
+};
+
 var MAIN_PIN_Y = Nodes.mapPinMain.offsetTop + MainPin.SIZE;
 
 // Функция случайного числа с параметром диапазона
@@ -188,11 +191,11 @@ var main = function (count) {
 var setStateFields = function (fields, isActive) {
   var fieldsKeys = Object.keys(fields);
 
-  for (var i = 0; i < fieldsKeys.length; i++) {
-    fields[fieldsKeys[i]].forEach(function (item) {
-      isActive ? item.removeAttribute('disabled') : item.setAttribute('disabled', 'disabled');
+  fieldsKeys.forEach(function (item, index) {
+    fields[fieldsKeys[index]].forEach(function (element) {
+      isActive ? element.removeAttribute('disabled') : element.setAttribute('disabled', 'disabled');
     });
-  }
+  });
 };
 
 // Функция установки координат адреса
@@ -200,7 +203,7 @@ var setAddressField = function (isState) {
   var left = Math.floor(MAIN_PIN_Y / 2);
   var top = isState ? Math.floor(MAIN_PIN_Y + MainPin.TAIL_HEIGHT) : Math.floor(MAIN_PIN_Y - MainPin.SIZE / 2);
 
-  ADDRESS_FIELD.value = top + ', ' + left;
+  ValidityFields.ADDRESS.value = top + ', ' + left;
 };
 
 // Функция перевода страницы в неактивный режим
@@ -245,23 +248,7 @@ var compareField = function (field1, field2) {
   field1 = parseInt(field1, 10);
   field2 = parseInt(field2, 10);
 
-  if (field1 === field2 && field1 >= 1) {
-    return true;
-  }
-
-  if (field1 === 2 && field2 === 1) {
-    return true;
-  }
-
-  if (field1 === 3 && field2 !== 0) {
-    return true;
-  }
-
-  if (field1 === 100 && field2 === 0) {
-    return true;
-  }
-
-  return false;
+  return field1 === field2 && field1 >= 1 || field1 === 2 && field2 === 1 || field1 === 3 && field2 !== 0 || field1 === 100 && field2 === 0;
 };
 
 // Функция для обработки options value.
@@ -278,10 +265,10 @@ Nodes.mapPinMain.addEventListener('mousedown', pinMovingHandler);
 document.addEventListener('keydown', pinPressEnterHandler);
 
 Nodes.adForm.addEventListener('click', function () {
-  var values = getSelectInputs(ROOM_NUMBER_FIELD, CAPACITY_FIELD);
+  var values = getSelectInputs(ValidityFields.ROOMS, ValidityFields.CAPACITY);
   var result = compareField(values.value1, values.value2);
 
-  result ? CAPACITY_FIELD.setCustomValidity('') : CAPACITY_FIELD.setCustomValidity(CUSTOM_VALIDITY_TEXT);
+  result ? ValidityFields.CAPACITY.setCustomValidity('') : ValidityFields.CAPACITY.setCustomValidity(CUSTOM_VALIDITY_TEXT);
 });
 
 deactivatePage();
