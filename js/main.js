@@ -65,28 +65,28 @@ var MainPin = {
 };
 
 var Nodes = {
-  map: document.querySelector('.map'),
-  mapPins: document.querySelector('.map__pins'),
-  mapPinMain: document.querySelector('.map__pin--main'),
-  adForm: document.querySelector('.ad-form'),
-  mapFilters: document.querySelector('.map__filters'),
-  adTemplate: document.querySelector('#pin').content.querySelector('.map__pin')
+  MAP: document.querySelector('.map'),
+  MAP_PINS: document.querySelector('.map__pins'),
+  MAP_PIN_MAIN: document.querySelector('.map__pin--main'),
+  AD_FORM: document.querySelector('.ad-form'),
+  MAP_FILTERS: document.querySelector('.map__filters'),
+  AD_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin')
 };
 
 var FieldNodes = {
-  AD_INPUTS: Nodes.adForm.querySelectorAll('input'),
-  FILTER_INPUTS: Nodes.mapFilters.querySelectorAll('input'),
-  AD_SELECTS: Nodes.adForm.querySelectorAll('select'),
-  FILTER_SELECTS: Nodes.mapFilters.querySelectorAll('select')
+  AD_INPUTS: Nodes.AD_FORM.querySelectorAll('input'),
+  FILTER_INPUTS: Nodes.MAP_FILTERS.querySelectorAll('input'),
+  AD_SELECTS: Nodes.AD_FORM.querySelectorAll('select'),
+  FILTER_SELECTS: Nodes.MAP_FILTERS.querySelectorAll('select')
 };
 
 var ValidityFields = {
-  ADDRESS: Nodes.adForm.querySelector('#address'),
-  ROOMS: Nodes.adForm.querySelector('#room_number'),
-  CAPACITY: Nodes.adForm.querySelector('#capacity')
+  ADDRESS: Nodes.AD_FORM.querySelector('#address'),
+  ROOMS: Nodes.AD_FORM.querySelector('#room_number'),
+  CAPACITY: Nodes.AD_FORM.querySelector('#capacity')
 };
 
-var MAIN_PIN_Y = Nodes.mapPinMain.offsetTop + MainPin.SIZE;
+var MAIN_PIN_Y = Nodes.MAP_PIN_MAIN.offsetTop + MainPin.SIZE;
 
 // Функция случайного числа с параметром диапазона
 var getRandomInteger = function (min, max) {
@@ -110,7 +110,7 @@ var getRandomArray = function (array) {
 };
 
 // Функция создания одного объявления
-var generateAd = function (count) {
+var mockAd = function (count) {
   var coords = {
     x: getRandomInteger(Coords.X_MIN, Coords.X_MAX),
     y: getRandomInteger(Coords.Y_MIN, Coords.Y_MAX)
@@ -145,11 +145,11 @@ var generateAd = function (count) {
 };
 
 // Функция создания массива объявлений
-var generateAdsArray = function (count) {
+var mockData = function (count) {
   var adsArray = [];
 
   for (var i = 0; i < count; i++) {
-    adsArray.push(generateAd(i));
+    adsArray.push(mockAd(i));
   }
 
   return adsArray;
@@ -157,7 +157,7 @@ var generateAdsArray = function (count) {
 
 // Функция рендера одного объявления
 var renderAd = function (ad) {
-  var element = Nodes.adTemplate.cloneNode(true);
+  var element = Nodes.AD_TEMPLATE.cloneNode(true);
 
   element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
   element.style.top = ad.location.y - Offset.Y + 'px';
@@ -172,30 +172,35 @@ var renderAd = function (ad) {
 var renderAds = function (array) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < array.length; i++) {
-    fragment.appendChild(renderAd(array[i]));
-  }
+  array.forEach(function (item) {
+    fragment.appendChild(renderAd(item));
+  });
 
   return fragment;
 };
 
 // Функция отрисовки всех объявлений на карте
 var main = function (count) {
-  var adsArray = generateAdsArray(count);
+  var adsArray = mockData(count);
   var fragment = renderAds(adsArray);
 
-  Nodes.mapPins.appendChild(fragment);
+  Nodes.MAP_PINS.appendChild(fragment);
 };
 
 // Функция блокировки / разблокировки полей
 var setStateFields = function (fields, isActive) {
   var fieldsKeys = Object.keys(fields);
 
-  fieldsKeys.forEach(function (item, index) {
-    fields[fieldsKeys[index]].forEach(function (element) {
-      isActive ? element.removeAttribute('disabled') : element.setAttribute('disabled', 'disabled');
+  fieldsKeys.forEach(function (key) {
+    fields[key].forEach(function (el) {
+      setInputAttribute(el, isActive);
     });
   });
+};
+
+// Функция установки / снятия атрибута disabled
+var setInputAttribute = function (el, isActive) {
+  isActive ? el.removeAttribute('disabled') : el.setAttribute('disabled', 'disabled');
 };
 
 // Функция установки координат адреса
@@ -208,7 +213,7 @@ var setAddressField = function (isState) {
 
 // Функция перевода страницы в неактивный режим
 var deactivatePage = function () {
-  Nodes.mapFilters.classList.add('map__filters--disabled');
+  Nodes.MAP_FILTERS.classList.add('map__filters--disabled');
 
   setAddressField(false);
   setStateFields(FieldNodes, false);
@@ -216,9 +221,9 @@ var deactivatePage = function () {
 
 //  Функция перевода страницы в активный режим
 var activatePage = function () {
-  Nodes.mapFilters.classList.remove('map__filters--disabled');
-  Nodes.adForm.classList.remove('ad-form--disabled');
-  Nodes.map.classList.remove('map--faded');
+  Nodes.MAP_FILTERS.classList.remove('map__filters--disabled');
+  Nodes.AD_FORM.classList.remove('ad-form--disabled');
+  Nodes.MAP.classList.remove('map--faded');
 
   setAddressField(true);
   setStateFields(FieldNodes, true);
@@ -230,7 +235,7 @@ var pinMovingHandler = function (evt) {
   if (evt.button === 0) {
     activatePage();
 
-    Nodes.mapPinMain.removeEventListener('mousedown', pinMovingHandler);
+    Nodes.MAP_PIN_MAIN.removeEventListener('mousedown', pinMovingHandler);
   }
 };
 
@@ -261,10 +266,10 @@ var getSelectInputs = function (input1, input2) {
   return Values;
 };
 
-Nodes.mapPinMain.addEventListener('mousedown', pinMovingHandler);
+Nodes.MAP_PIN_MAIN.addEventListener('mousedown', pinMovingHandler);
 document.addEventListener('keydown', pinPressEnterHandler);
 
-Nodes.adForm.addEventListener('click', function () {
+Nodes.AD_FORM.addEventListener('click', function () {
   var values = getSelectInputs(ValidityFields.ROOMS, ValidityFields.CAPACITY);
   var result = compareField(values.value1, values.value2);
 
