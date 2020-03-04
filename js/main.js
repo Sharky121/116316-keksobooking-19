@@ -228,14 +228,16 @@ var activatePage = function () {
   setAddressField(true);
   setStateFields(FieldNodes, true);
   main(COUNT);
+
+  // Снимаем обработчики
+  Nodes.MAP_PIN_MAIN.removeEventListener('mousedown', pinMovingHandler);
+  document.removeEventListener('keydown', pinPressEnterHandler);
 };
 
 // Хэндлер для перемещения пина
 var pinMovingHandler = function (evt) {
   if (evt.button === 0) {
     activatePage();
-
-    Nodes.MAP_PIN_MAIN.removeEventListener('mousedown', pinMovingHandler);
   }
 };
 
@@ -243,8 +245,6 @@ var pinMovingHandler = function (evt) {
 var pinPressEnterHandler = function (evt) {
   if (evt.key === 'Enter') {
     activatePage();
-
-    document.removeEventListener('keydown', pinPressEnterHandler);
   }
 };
 
