@@ -94,7 +94,7 @@
   };
 
   // Функция создания массива объявлений
-  var mockData = function (count) {
+  var mockAds = function (count) {
     var adsArray = [];
 
     for (var i = 0; i < count; i++) {
@@ -104,5 +104,5 @@
     return adsArray;
   };
 
-  window.mockAds = mockData(COUNT);
+  window.mockAds = mockAds(COUNT);
 })();

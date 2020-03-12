@@ -6,14 +6,11 @@
     Y: 70
   };
 
-  var Nodes = {
-    MAP_PINS: document.querySelector('.map__pins'),
-    AD_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin')
-  };
+  var adTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
   // Функция рендера одного пина
   var renderPin = function (ad) {
-    var element = Nodes.AD_TEMPLATE.cloneNode(true);
+    var element = adTemplate.cloneNode(true);
 
     element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
     element.style.top = ad.location.y - Offset.Y + 'px';
@@ -35,12 +32,5 @@
     return fragment;
   };
 
-  // Функция отрисовки всех объявлений на карте
-  var map = function () {
-    var fragment = renderPins(window.mockAds);
-
-    Nodes.MAP_PINS.appendChild(fragment);
-  };
-
-  window.pin = map;
+  window.renderPins = renderPins;
 })();
