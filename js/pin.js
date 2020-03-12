@@ -12,7 +12,7 @@
   };
 
   // Функция рендера одного пина
-  var renderAd = function (ad) {
+  var renderPin = function (ad) {
     var element = Nodes.AD_TEMPLATE.cloneNode(true);
 
     element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
@@ -25,20 +25,19 @@
   };
 
   // Функция создания фрагмента
-  var renderAds = function (array) {
+  var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
 
     array.forEach(function (item) {
-      fragment.appendChild(renderAd(item));
+      fragment.appendChild(renderPin(item));
     });
 
     return fragment;
   };
 
   // Функция отрисовки всех объявлений на карте
-  var map = function (count) {
-    var adsArray = window.mock(count);
-    var fragment = renderAds(adsArray);
+  var map = function () {
+    var fragment = renderPins(window.mockAds);
 
     Nodes.MAP_PINS.appendChild(fragment);
   };

@@ -22,18 +22,9 @@
     return filterArray.length === 0 ? array : filterArray;
   };
 
-  // Функция сравнения двух полей
-  var compareField = function (field1, field2) {
-    field1 = parseInt(field1, 10);
-    field2 = parseInt(field2, 10);
-
-    return field1 === field2 && field1 >= 1 || field1 === 2 && field2 === 1 || field1 === 3 && field2 !== 0 || field1 === 100 && field2 === 0;
-  };
-
   window.helper = {
     getRandomInteger: getRandomInteger,
     getRandomElementArray: getRandomElementArray,
-    getRandomArray: getRandomArray,
-    compareField: compareField
+    getRandomArray: getRandomArray
   };
 })();

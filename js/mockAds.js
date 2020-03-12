@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var COUNT = 8;
+
   var FEATURES = [
     'wifi',
     'dishwasher',
@@ -102,5 +104,5 @@
     return adsArray;
   };
 
-  window.mock = mockData;
+  window.mockAds = mockData(COUNT);
 })();
