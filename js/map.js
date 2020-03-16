@@ -17,10 +17,22 @@
   };
 
   // Функция отрисовки пинов
-  var initPins = function () {
-    var fragment = window.renderPins(window.mockAds);
+  var onMapRenderPins = function (array) {
+    var fragment = window.renderPins(array);
 
     Nodes.MAP_PINS.appendChild(fragment);
+  };
+
+  var onMapErrorLoad = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
   };
 
   // Функция перевода страницы в неактивный режим
@@ -38,7 +50,7 @@
     Nodes.MAP.classList.remove('map--faded');
 
     // Рисуем пины
-    initPins();
+    window.backend.load(onMapRenderPins, onMapErrorLoad);
 
     window.form.setAddressField(true);
     window.form.setStateFields(FieldNodes, true);
@@ -69,4 +81,3 @@
     deactivatePage: deactivatePage
   };
 })();
-
