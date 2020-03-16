@@ -61,8 +61,8 @@
   // Функция создания одного объявления
   var mockAd = function (count) {
     var coords = {
-      x: window.helper.getRandomInteger(Coords.X_MIN, Coords.X_MAX),
-      y: window.helper.getRandomInteger(Coords.Y_MIN, Coords.Y_MAX)
+      x: window.helper.getRandomBetween(Coords.X_MIN, Coords.X_MAX),
+      y: window.helper.getRandomBetween(Coords.Y_MIN, Coords.Y_MAX)
     };
 
     var ad = {
@@ -73,15 +73,15 @@
       offer: {
         title: 'Title ' + count,
         address: coords.x + ', ' + coords.y,
-        price: window.helper.getRandomInteger(Price.MIN, Price.MAX),
-        type: window.helper.getRandomElementArray(TYPES),
-        rooms: window.helper.getRandomInteger(Rooms.MIN, Rooms.MAX),
-        guests: window.helper.getRandomInteger(Guests.MIN, Guests.MAX),
-        checkin: window.helper.getRandomElementArray(TIMES),
-        checkout: window.helper.getRandomElementArray(TIMES),
-        features: window.helper.getRandomArray(FEATURES),
+        price: window.helper.getRandomBetween(Price.MIN, Price.MAX),
+        type: window.helper.getRandomItem(TYPES),
+        rooms: window.helper.getRandomBetween(Rooms.MIN, Rooms.MAX),
+        guests: window.helper.getRandomBetween(Guests.MIN, Guests.MAX),
+        checkin: window.helper.getRandomItem(TIMES),
+        checkout: window.helper.getRandomItem(TIMES),
+        features: window.helper.getRandomItems(FEATURES),
         description: 'Description ' + count,
-        photos: window.helper.getRandomArray(PHOTOS)
+        photos: window.helper.getRandomItems(PHOTOS)
       },
 
       location: {
@@ -104,5 +104,5 @@
     return adsArray;
   };
 
-  window.mockAds = mockAds(COUNT);
+  window.data = mockAds(COUNT);
 })();

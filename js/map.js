@@ -16,6 +16,12 @@
     FILTER_SELECTS: Nodes.MAP_FILTERS.querySelectorAll('select')
   };
 
+  var ClassLists = {
+    MAP_FILTERS_DISABLED: 'map__filters--disabled',
+    AD_FORM_DISABLED: 'ad-form--disabled',
+    MAP_FADED: 'map--faded'
+  };
+
   // Функция отрисовки пинов
   var onMapRenderPins = function (array) {
     var fragment = window.renderPins(array);
@@ -37,7 +43,7 @@
 
   // Функция перевода страницы в неактивный режим
   var deactivatePage = function () {
-    Nodes.MAP_FILTERS.classList.add('map__filters--disabled');
+    Nodes.MAP_FILTERS.classList.add(ClassLists.MAP_FILTERS_DISABLED);
 
     window.form.setAddressField(false);
     window.form.setStateFields(FieldNodes, false);
@@ -45,9 +51,9 @@
 
   //  Функция перевода страницы в активный режим
   var activatePage = function () {
-    Nodes.MAP_FILTERS.classList.remove('map__filters--disabled');
-    Nodes.AD_FORM.classList.remove('ad-form--disabled');
-    Nodes.MAP.classList.remove('map--faded');
+    Nodes.MAP_FILTERS.classList.remove(ClassLists.MAP_FILTERS_DISABLED);
+    Nodes.AD_FORM.classList.remove(ClassLists.AD_FORM_DISABLED);
+    Nodes.MAP.classList.remove(ClassLists.MAP_FADED);
 
     // Рисуем пины
     window.backend.load(onMapRenderPins, onMapErrorLoad);

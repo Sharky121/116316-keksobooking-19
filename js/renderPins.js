@@ -11,12 +11,13 @@
   // Функция рендера одного пина
   var renderPin = function (ad) {
     var element = adTemplate.cloneNode(true);
+    var img = element.querySelector('img');
 
     element.style.left = ad.location.x - (Offset.X) / 2 + 'px';
     element.style.top = ad.location.y - Offset.Y + 'px';
 
-    element.querySelector('img').src = ad.author.avatar;
-    element.querySelector('img').alt = ad.offer.title;
+    img.src = ad.author.avatar;
+    img.alt = ad.offer.title;
 
     return element;
   };

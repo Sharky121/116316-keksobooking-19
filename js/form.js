@@ -32,7 +32,7 @@
   // Функция установки координат адреса
   var setAddressField = function (isState) {
     var left = Math.floor(MAIN_PIN_Y / 2);
-    var top = isState ? Math.floor(MAIN_PIN_Y + MainPin.TAIL_HEIGHT) : Math.floor(MAIN_PIN_Y - MainPin.SIZE / 2);
+    var top = Math.floor(MAIN_PIN_Y + (isState ? MainPin.TAIL_HEIGHT : -MainPin.SIZE / 2));
 
     ValidityFields.ADDRESS.value = top + ', ' + left;
   };
@@ -50,7 +50,7 @@
 
   // Функция установки / снятия атрибута disabled
   var setInputAttribute = function (el, isActive) {
-    el[isActive ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+    var inputAttr = el[isActive ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
   };
 
   // Функция для обработки options value.
